@@ -186,3 +186,7 @@ If you find this project useful:
 EcoGuard is a step toward building **smarter, greener, and more sustainable environments** by combining **technology with environmental responsibility**. It demonstrates how AI and IoT can be leveraged to solve real-world ecological challenges.
 
 ---
+
+**KISHOR KAKDE PATIL**
+
+---
