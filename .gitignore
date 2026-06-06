@@ -1,0 +1,122 @@
+# ==========================================
+# 🌱 EcoGuard Root GitIgnore Configuration
+# ==========================================
+
+# 🔐 Sensitive Files, API Keys, Credentials & Links
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+.env*
+
+# API keys & key-related files/directories (case-insensitive patterns)
+*api_key*
+*API_KEY*
+*ApiKey*
+*apikey*
+*APIKEY*
+*OPENAI_API_KEY*
+*GEMINI_API_KEY*
+*WAQI_TOKEN*
+*OWM_API_KEY*
+
+# Private folders & files
+private/
+*private*
+*PRIVATE*
+*Private*
+
+# General secret/credential configurations
+*secret*
+*SECRET*
+*Secret*
+*credential*
+*CREDENTIAL*
+*credentials*
+config.ts
+config.js
+secret.ts
+secret.js
+secrets.ts
+secrets.js
+credentials.json
+*.pem
+*.key
+*.pfx
+*.cer
+*.crt
+*.der
+*.p12
+
+
+# 🐍 Python (Backend)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Python Virtual Environments
+.env/
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Machine Learning Models & Large Binary Files (e.g. backend/aqi_model.pkl)
+*.pkl
+*.pickle
+*.h5
+*.joblib
+
+# 📦 Node / Vite (Frontend)
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+dist/
+dist-ssr/
+*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 🛠️ Editor, IDE and OS Files
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
