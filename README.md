@@ -1,99 +1,111 @@
-# 🌱 EcoGuard
+# 🌱 EcoGuard PRO
 
-## 🚀 Overview
+[![Python Version](https://img.shields.io/badge/Python-3.13+-blue.svg?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Vite Version](https://img.shields.io/badge/Vite-8.0+-646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev)
+[![React Version](https://img.shields.io/badge/React-19.0-61DAFB.svg?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![FastAPI Version](https://img.shields.io/badge/FastAPI-0.136+-009688.svg?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg?style=for-the-badge)](#)
 
-**EcoGuard** is an innovative, AI-powered platform designed to promote **environmental sustainability** by leveraging modern technologies such as **Machine Learning, IoT, and real-time data analytics**.
-
-The system focuses on monitoring environmental conditions, detecting threats such as pollution, deforestation, or ecological imbalance, and providing actionable insights for better decision-making. ([Devpost - The home for hackathons][1])
-
----
-
-## 🎯 Objectives
-
-* 🌍 Monitor environmental conditions in real time
-* 🤖 Use AI/ML to predict environmental risks
-* 🚨 Provide alerts for anomalies (pollution, deforestation, etc.)
-* 📊 Visualize environmental data for better insights
-* 🤝 Enable collaboration for conservation efforts
+**EcoGuard PRO** is an enterprise-grade, AI-driven environmental monitoring and sustainability platform. By coordinating a **Multi-Agent intelligence architecture**, real-time IoT telemetry pipelines, and predictive Machine Learning models, EcoGuard PRO provides citizens, organizations, and researchers with actionable ecological insights, health alerts, and personalized conservation tasks.
 
 ---
 
-## 🧠 Key Features
+## 📸 Application Preview
 
-### 🔹 Real-Time Monitoring
+### 📊 Real-Time Multi-Agent Dashboard
+![EcoGuard PRO Dashboard](dashboard.png)
 
-* Tracks environmental parameters such as:
+*The EcoGuard PRO Dashboard aggregates real-time geocoded telemetry, pollen levels, and active environmental advisories dynamically using a keyless Open-Meteo fallback.*
 
-  * Air Quality (AQI, CO₂, PM levels)
-  * Water quality
-  * Noise pollution
-  * Temperature & humidity
+### 🤖 AI Predictor & Random Forest Model Inference
+![EcoGuard PRO Predictor](predictor.png)
 
-### 🔹 AI-Powered Predictions
-
-* Detects anomalies and patterns
-* Predicts environmental risks using ML models
-* Helps in proactive decision-making
-
-### 🔹 IoT Integration
-
-* Supports multiple sensors (WiFi, LoRaWAN, Bluetooth)
-* Enables continuous environmental data collection
-
-### 🔹 Data Visualization
-
-* Interactive dashboards and charts
-* Real-time insights and historical analysis
-
-### 🔹 Smart Alerts
-
-* Instant notifications for threshold breaches
-* Early warning system for environmental threats
+*The AI Predictor tab utilizes a locally trained Random Forest Regressor to run real-time air quality forecasts based on Temperature, Humidity, and PM2.5 levels.*
 
 ---
 
-## 🛠️ Tech Stack
+## 🧠 Multi-Agent Architecture & Pipeline
+
+EcoGuard PRO leverages a cooperative multi-agent team to fetch, process, safety-audit, and report environmental data:
+
+```mermaid
+graph TD
+    User([User Request]) --> API[FastAPI Gateway]
+    API --> EnvAgent[Environment Agent]
+    EnvAgent -->|Keyless Fallback| OpenMeteo[Open-Meteo Weather/AQI API]
+    EnvAgent -->|Authenticated API| OWM[OpenWeatherMap / WAQI API]
+    
+    EnvAgent -->|Aggregated Data| SafetyAgent[Safety Agent]
+    EnvAgent -->|Aggregated Data| CommAgent[Community Agent]
+    EnvAgent -->|Aggregated Data| PlanAgent[Planner Agent]
+    
+    SafetyAgent -->|Safety Tips & Advisories| RepAgent[Reporter Agent]
+    CommAgent -->|Personalized Eco-Tasks| RepAgent
+    PlanAgent -->|7-Day Suitability Plan| RepAgent
+    
+    RepAgent -->|Formatted Markdown Report| UI[React Dashboard & Chat Assistant]
+    UI -->|Query/Prompt| ChatAgent[Gemini / GPT-4o-Mini Chat Agent]
+```
+
+### 👥 Meet the Agents
+1. **Environment Agent (`EnvironmentAgent`)**: Integrates with live geocoded APIs (OpenWeatherMap, WAQI, and keyless Open-Meteo API) to compile current air quality metrics, temperature, humidity, rainfall, and UV exposure.
+2. **Safety Agent (`SafetyAgent`)**: Assesses safety levels and correlates data against individual health profiles (e.g., asthmatic sensitivities, high-UV warnings, extreme heat advisories).
+3. **Community Agent (`CommunityAgent`)**: Generates custom, context-aware green habits and eco-tasks (e.g., rainwater harvesting suggestions when rain is predicted).
+4. **Planner Agent (`PlannerAgent`)**: Projects weekly environmental suitability scores and custom irrigation/plant-care regimens.
+5. **Reporter Agent (`ReporterAgent`)**: Consolidates agent telemetry into standardized, exportable markdown reports.
+6. **AI Chat Assistant (`EcoGuard AI`)**: Contextual assistant powered by **Gemini 2.5 Flash** (or **GPT-4o-Mini**) to provide interactive environmental advice.
+
+---
+
+## 🛠️ Technical Stack & Dependencies
 
 ### 💻 Frontend
-
-* React.js
-* Chart.js / D3.js
+- **Framework**: React 19 (Vite-powered SPA)
+- **Styling**: Vanilla CSS (Custom Glassmorphism Design System)
+- **Charts**: Chart.js (`react-chartjs-2`)
+- **Icons**: Lucide React
 
 ### ⚙️ Backend
-
-* Node.js
-* Flask
+- **Framework**: FastAPI (Asynchronous Python)
+- **Web Server**: Uvicorn
+- **Environment Management**: Python-dotenv & Pydantic v2
+- **Network Requests**: Requests (with fallback fallback triggers)
 
 ### 🧠 Machine Learning
-
-* Python
-* Predictive Models (Random Forest, etc.)
-
-### 🗄️ Database
-
-* MongoDB
-* PostgreSQL
-* InfluxDB (time-series data)
-
-### 🔗 Other Tools
-
-* WebSockets (real-time communication)
-* IoT Sensors Integration
-* Docker & Kubernetes (deployment)
+- **Library**: Scikit-Learn (Random Forest Regressor)
+- **Model Storage**: Joblib serialization
+- **Training Data**: Synthetic data pipeline modeling temperature, humidity, and PM2.5 relationships.
 
 ---
 
 ## 📂 Project Structure
 
 ```bash
-EcoGuard/
+EcoGuard_New/
 │
-├── frontend/        # React UI
-├── backend/         # APIs & server logic
-├── ml-models/       # Machine learning models
-├── data/            # Datasets
-├── utils/           # Helper functions
-└── README.md
+├── backend/                  # Python FastAPI API & ML Pipeline
+│   ├── venv/                 # Python Virtual Environment (gitignored)
+│   ├── app.py                # Main backend server and agent classes
+│   ├── train_model.py        # Model training script
+│   ├── aqi_model.pkl         # Trained Random Forest Regressor (gitignored)
+│   ├── requirements.txt      # Backend Python dependencies
+│   └── .env                  # Secrets configuration (gitignored)
+│
+├── frontend/                 # React UI Client
+│   ├── dist/                 # Production production build (gitignored)
+│   ├── node_modules/         # Package manager dependencies (gitignored)
+│   ├── src/
+│   │   ├── assets/           # Media & static graphics
+│   │   ├── components/       # Dashboard tabs (MapTab, EcoTab, PlannerTab, etc.)
+│   │   ├── App.jsx           # Main React App interface
+│   │   └── index.css         # Custom premium CSS variables and styles
+│   ├── package.json          # Node dependencies
+│   └── vite.config.js        # Vite configurations
+│
+├── .gitignore                # Root gitignore configuration
+├── dashboard.png             # Application Dashboard Screenshot
+├── predictor.png             # Application Predictor Screenshot
+└── README.md                 # Project Documentation
 ```
 
 ---
@@ -101,92 +113,85 @@ EcoGuard/
 ## ⚙️ Installation & Setup
 
 ### 1️⃣ Clone the Repository
-
 ```bash
 git clone https://github.com/Kishor055/EcoGuard.git
 cd EcoGuard
 ```
 
-### 2️⃣ Install Dependencies
+### 2️⃣ Backend Configuration & Server Setup
+Create a virtual environment, install requirements, and run the FastAPI server:
 
 ```bash
-# frontend
-cd frontend
-npm install
+cd backend
+python -m venv venv
 
-# backend
-cd ../backend
+# Windows:
+.\venv\Scripts\activate
+# Linux/macOS:
+source venv/bin/activate
+
 pip install -r requirements.txt
 ```
 
-### 3️⃣ Run the Application
-
+#### Train the ML Model
+Generate the synthetic training data and calibrate the Random Forest Model:
 ```bash
-# start backend
-python app.py
+python train_model.py
+```
 
-# start frontend
-npm start
+#### Setup Environment Variables (`.env`)
+Create a `.env` file inside the `backend` directory (do not commit this):
+```ini
+# API Keys & Tokens
+OWM_API_KEY=your_openweathermap_api_key
+WAQI_TOKEN=your_waqi_api_token
+GEMINI_API_KEY=your_google_gemini_api_key
+OPENAI_API_KEY=your_openai_api_key
+```
+*Note: If no API keys are provided, the system seamlessly falls back to Open-Meteo keyless APIs and rule-based conversational scripts.*
+
+#### Run the FastAPI Backend
+```bash
+uvicorn app:app --host 127.0.0.1 --port 8000 --reload
 ```
 
 ---
 
-## 📈 Use Cases
+### 3️⃣ Frontend Client Setup
+Install the Node dependencies and run the Vite hot-reloading dev server:
 
-* 🌆 Smart Cities (pollution monitoring & prediction)
-* 🌳 Wildlife & Forest Protection
-* 🏭 Industrial Pollution Control
-* 🌊 Water Quality Monitoring
-* 🏡 Community Environmental Awareness
-
----
-
-## ⚠️ Challenges
-
-* Integrating real-time data from multiple sources
-* Ensuring accuracy of ML predictions
-* Handling large-scale data efficiently
-* Designing intuitive dashboards
+```bash
+cd ../frontend
+npm install
+npm run dev
+```
+Open **`http://localhost:5173/`** in your browser to view the application.
 
 ---
 
-## 🔮 Future Enhancements
+## 📈 Use Cases & Impact
 
-* 📱 Mobile application
-* 🌐 Expansion to global datasets
-* 🤝 Integration with government APIs
-* 🧠 Advanced AI models for higher accuracy
-* 📡 More IoT device support
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome!
-
-1. Fork the repository
-2. Create a new branch
-3. Commit your changes
-4. Submit a Pull Request
+- 🌁 **Urban Pollution Forecasting**: Empowers citizens in high-smog cities to plan outdoor activities.
+- 🌾 **Smart Agriculture / Home Gardening**: Suggests tailored irrigation adjustments based on precipitation metrics.
+- 🫁 **Health Risk Management**: Provides protective alerts for asthmatic and allergy-sensitive groups.
+- ♻️ **Actionable Conservation**: Tracks micro-habits that reduce energy consumption and waste production.
 
 ---
 
-## ⭐ Support
+## ⭐ Support & Contributions
 
-If you find this project useful:
-
-* ⭐ Star the repository
-* 🍴 Fork it
-* 📢 Share with others
-
----
-
-## 📌 Conclusion
-
-EcoGuard is a step toward building **smarter, greener, and more sustainable environments** by combining **technology with environmental responsibility**. It demonstrates how AI and IoT can be leveraged to solve real-world ecological challenges.
+Contributions are welcome! Please follow these guidelines:
+1. Fork the project.
+2. Create a feature branch (`git checkout -b feature/NewFeature`).
+3. Commit your changes (`git commit -m 'Add NewFeature'`).
+4. Push to the branch (`git push origin feature/NewFeature`).
+5. Open a Pull Request.
 
 ---
 
-**KISHOR KAKDE PATIL**
+### 📌 Development Lead
+**KISHOR KAKDE PATIL**  
+[GitHub Profile](https://github.com/Kishor055)
 
 ---
+*Developed with ❤️ to protect our environment and promote sustainability.*
