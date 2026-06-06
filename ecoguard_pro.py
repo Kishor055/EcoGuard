@@ -13,12 +13,19 @@ from dataclasses import dataclass, field
 
 from fastapi import FastAPI
 from pydantic import BaseModel
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv(override=True)
+
+
 
 # ==============================
 # 🔐 CONFIG
 # ==============================
 OWM_API_KEY = os.getenv("OWM_API_KEY")
 WAQI_TOKEN = os.getenv("WAQI_TOKEN")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # ==============================
 # ⚡ CACHE SYSTEM
@@ -160,6 +167,76 @@ class EnvironmentAgent:
             except:
                 pass
 
+        # Fallback to keyless Open-Meteo API if OWM key is not configured or failed
+        try:
+            # 1. Geocode city name to coordinates
+            geo_url = "https://geocoding-api.open-meteo.com/v1/search"
+            geo_params = {"name": city, "count": 1, "format": "json"}
+            geo_resp = requests.get(geo_url, params=geo_params, timeout=5)
+            
+            if geo_resp.status_code == 200 and geo_resp.json().get("results"):
+                res = geo_resp.json()["results"][0]
+                lat = float(res["latitude"])
+                lon = float(res["longitude"])
+                
+                # 2. Fetch real-time weather
+                weather_url = "https://api.open-meteo.com/v1/forecast"
+                weather_params = {
+                    "latitude": lat,
+                    "longitude": lon,
+                    "current": "temperature_2m,relative_humidity_2m,rain"
+                }
+                w_resp = requests.get(weather_url, params=weather_params, timeout=5)
+                
+                # 3. Fetch real-time air quality
+                aq_url = "https://air-quality-api.open-meteo.com/v1/air-quality"
+                aq_params = {
+                    "latitude": lat,
+                    "longitude": lon,
+                    "current": "pm2_5,pm10,us_aqi,uv_index"
+                }
+                aq_resp = requests.get(aq_url, params=aq_params, timeout=5)
+                
+                temp = 25.0
+                humidity = 60
+                rain = 0.0
+                aqi = 50
+                pm25 = 12.0
+                pm10 = 20.0
+                uv = 3.0
+                
+                if w_resp.status_code == 200:
+                    w_data = w_resp.json().get("current", {})
+                    temp = w_data.get("temperature_2m", temp)
+                    humidity = w_data.get("relative_humidity_2m", humidity)
+                    rain = w_data.get("rain", rain)
+                    
+                if aq_resp.status_code == 200:
+                    aq_data = aq_resp.json().get("current", {})
+                    aqi = aq_data.get("us_aqi", aqi)
+                    pm25 = aq_data.get("pm2_5", pm25)
+                    pm10 = aq_data.get("pm10", pm10)
+                    uv = aq_data.get("uv_index", uv)
+                    
+                env = EnvironmentData(
+                    timestamp=now,
+                    city=city,
+                    aqi=int(aqi),
+                    pm25=float(pm25),
+                    pm10=float(pm10),
+                    uv_index=float(uv),
+                    temperature_c=float(temp),
+                    humidity_pct=int(humidity),
+                    rainfall_mm=float(rain),
+                    pollen_level=random.choice(["low", "moderate", "high"]),
+                )
+                
+                set_cache(cache_key, env)
+                return env
+        except Exception as e:
+            print(f"Error querying Open-Meteo keyless APIs: {e}. Falling back to mock data.")
+
+
         # fallback mock
         rnd = random.Random(city)
         env = EnvironmentData(
@@ -244,12 +321,47 @@ class PlannerAgent:
 # 🧠 LLM ASSISTANT
 # ==============================
 def generate_advice(env):
+    if OPENAI_API_KEY:
+        try:
+            url = "https://api.openai.com/v1/chat/completions"
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {OPENAI_API_KEY}"
+            }
+            system_prompt = f"""You are the EcoGuard AI Assistant.
+Provide a concise, helpful environmental recommendation for the city of {env.city} based on these parameters:
+- AQI: {env.aqi}
+- PM2.5: {env.pm25} µg/m³
+- Temperature: {env.temperature_c}°C
+- Humidity: {env.humidity_pct}%
+- UV Index: {env.uv_index:.1f}
+- Pollen level: {env.pollen_level}
+Keep it short, action-oriented, and eco-friendly (under 60 words).
+"""
+            payload = {
+                "model": "gpt-4o-mini",
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": "What is your advice for today?"}
+                ],
+                "temperature": 0.7,
+                "max_tokens": 150
+            }
+            resp = requests.post(url, headers=headers, json=payload, timeout=8)
+            if resp.status_code == 200:
+                return resp.json()["choices"][0]["message"]["content"].strip()
+            else:
+                print(f"OpenAI API returned status {resp.status_code}: {resp.text}")
+        except Exception as e:
+            print(f"Error calling OpenAI API: {e}")
+
     if env.aqi > 150:
         return "Air quality is unhealthy. Stay indoors."
     elif env.aqi > 100:
         return "Limit outdoor exposure."
     else:
         return "Great day for outdoor activity!"
+
 
 # ==============================
 # 📊 REPORTER
